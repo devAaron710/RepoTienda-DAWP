@@ -33,14 +33,70 @@
     height: 75%;
     width: 80%;
     position: fixed;
-    background-color: gold  ;
+    background-color: dimgray  ;
 }
+
+/*# Para ID*/
 #piePagina{
     bottom: 0%;
     left: 0%;
     height: 10%;
     width: 100%;
     position: fixed;
-    background-color: tomato;
+    background-color: cyan;
 }
 
+/*. Para Clases*/
+.parrafoBlanco{
+    color: white;
+    font-size: 20px;
+}
+
+.parrafoCentrado{
+    text-align: center;
+}
+
+.parrafoRojo{
+    color: red;
+}
+
+/*p{
+    font-size: 20px;
+}*/
+
+/*
+div p{
+    font-size: 11px;
+}*/
+
+/*p, h1, h2{
+    font-size: 50px
+}*/
+
+div.parrafoBlanco p{
+    font-size: 20px;
+}
+
+/**{
+    font-family: Arial;
+}*/
+
+
+body{
+    background-color: gray;
+}
+
+a:visited{
+    font-size: 30px;
+}
+
+a:hover{
+    background-color: green;
+    color: white;
+    transition: 0.7s;
+}
+
+a:active{
+    background-color: purple;
+    color: white;
+}
