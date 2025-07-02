@@ -3,6 +3,7 @@ package com.tienda.domain;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -19,6 +20,11 @@ public class Categoria implements Serializable{
     private String descripcion;
     private String rutaImagen;
     private boolean activo;
+    
+    //relacion
+    @OneToMany
+    @JoinColumn (name = "id_categoria", insertable = false, updatable = false)
+    private List<Producto>productos;
 
     //constructor base
     public Categoria() {
@@ -30,8 +36,4 @@ public class Categoria implements Serializable{
         this.rutaImagen = rutaImagen;
         this.activo = activo;
     }
-    
-    
-    
-    
 }
