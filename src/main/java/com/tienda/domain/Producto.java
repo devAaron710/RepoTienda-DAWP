@@ -1,4 +1,3 @@
-
 package com.tienda.domain;
 
 import jakarta.persistence.*;
@@ -25,7 +24,8 @@ public class Producto implements Serializable{
     private String rutaImagen;
     private boolean activo;
     
-    //relacion
+    //Asociacion  delegar cargas transaccionales a la BD
+    //relacion categorias asociada a un producto 
     @ManyToOne
     @JoinColumn(name = "id_categoria")
     private Categoria categoria;

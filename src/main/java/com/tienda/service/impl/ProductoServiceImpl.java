@@ -1,4 +1,3 @@
-
 package com.tienda.service.impl;
 
 import com.tienda.dao.ProductoDao;
@@ -11,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 //define la logica de los metodos de la interfaz que implementa
 @Service
-public class ProductoServiceImpl implements ProductoService{
-    
+public class ProductoServiceImpl implements ProductoService {
+
     @Autowired
     private ProductoDao productoDao;
 
@@ -43,5 +42,31 @@ public class ProductoServiceImpl implements ProductoService{
     public void delete(Producto producto) {
         productoDao.deleteById(producto.getIdProducto());
     }
-    
+
+    // Lista de productos con precio entre ordendados por descripción ConsultaAmpliada cantidad de parametros debe coincidir con el dao
+    @Override
+    @Transactional(readOnly = true)
+    public List<Producto> buscarPorRangoPrecio(double precioInf, double precioSup) {
+        return productoDao.findByPrecioBetweenOrderByDescripcion(precioInf, precioSup);
+    }
+
+    @Override
+    @Transactional(readOnly = true) //manejar transaccion
+    public List<Producto> buscarParteDescripcion(String termino) {
+        return productoDao.findByDescripcionContainingIgnoreCase(termino);
+    }
+
+    //SEM9
+    @Override
+    @Transactional(readOnly = true)
+    public List<Producto> metodoJPQL(double precioInf, double precioSup) {
+        return productoDao.metodoJPQL(precioInf, precioSup);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Producto> metodoNativo(double precioInf, double precioSup) {
+        return productoDao.metodoNativo(precioInf, precioSup);
+    }
+
 }

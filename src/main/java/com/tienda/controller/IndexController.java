@@ -12,9 +12,9 @@ public class IndexController {
         return "index";//nombre de la vista en templates a mostrar
     }
     
-    @RequestMapping("/informacion")
-    public String info() {
-        return "info";
-    }
+//    @RequestMapping("/informacion")
+//    public String info() {
+//        return "info";
+//    }
     
 }
