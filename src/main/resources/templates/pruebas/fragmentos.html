@@ -156,7 +156,7 @@
                     </form>
                 </div>
             </div>
-            //FILA APARTE
+            <!-- FILA APARTE -->
             <div class="row py-2">
                 <div class="col-md-2"></div>
                 <div class="col-md-8 queryDescription">
@@ -164,9 +164,9 @@
                           class="was-validated">
                         <div class="card">                            
                             <div class="card-body">
-                                //input
+                                <!-- input -->
                                 <div class="mb-3">
-                                    <label for="descripcion">Digite una descripcion</label>
+                                    <label for="descripcion">[[#{pruebas.nativo}]]</label>
                                     <input type="text" class="form-control" 
                                            th:value="${descripcion}"
                                            th:name="descripcion" required="true"/>
@@ -181,7 +181,35 @@
                     </form>
                 </div> 
             </div>
-        </section> 
-
+        </section>
+        
+        <!-- 4 Sección para la practica 4 -->
+        <section th:fragment="filtrosPrac4" class="bg-light">
+           <div class="row py-2">
+                <div class="col-md-4"></div>
+                <div class="col-md-3 practica4">
+                    <form method="POST" th:action="@{/pruebas/queryExistencias}" 
+                          class="was-validated">
+                        <div class="card" >                            
+                            <div class="card-body">
+                                <!-- input -->
+                                <div class="mb-3">
+                                    <label for="existencias">[[#{plantilla.input.listado3}]]</label>
+                                    <input type="text" class="form-control" 
+                                           th:value="${existencias}"
+                                           th:name="existencias" required="true"/>
+                                </div>
+                            </div>
+                            <div class="card-footer text-center">
+                                <button type="submit" class="btn btn-info">
+                                    <i class="fas fa-check"></i>[[#{plantilla.boton.buscar}]]
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div> 
+            </div>
+        </section>
+        
     </body>
 </html>
