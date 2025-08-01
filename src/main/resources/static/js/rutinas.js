@@ -1,3 +1,15 @@
+$(document).ready(function () {
+    if($("#resultsBlock").length > 0){
+        cargarLista();
+    }    
+});
+
+/*llama a una url y lo carga en el bloque vacio*/
+function cargarLista(){
+    var url = '/refrescarBoton';
+    $("#resultsBlock").load(url);
+}
+
 /* La siguiente función se utiliza para visualizar la imagen seleccionada en la
  * página html donde se desea "cargar" utilizando un llamado "ajax"*/
 function readURL(input) {

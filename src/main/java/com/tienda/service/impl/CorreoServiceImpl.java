@@ -14,6 +14,7 @@ public class CorreoServiceImpl implements CorreoService {
     @Autowired
     private JavaMailSender mailSender;
 
+    //METODO GENERICO / SIRVE PARA EL PROYECTO
     @Override
       public void enviarCorreoHtml(String para,String asunto,String contenidoHtml)throws MessagingException {
           
