@@ -3,85 +3,141 @@ package com.tienda.controller;
 
 import com.tienda.domain.Categoria;
 import com.tienda.domain.Producto;
-import com.tienda.service.CategoriaService;
 import com.tienda.service.ProductoService;
 import com.tienda.service.impl.FirebaseStorageServiceImpl;
+import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/producto")
 public class ProductoController {
-    
-   @Autowired
-    ProductoService productoService;
-   
-   //se utiliza para llamar o utilizar las distinstas caregorias y agrgarlas a una lista
-   @Autowired
-    CategoriaService categoriaService;
-   
-   @Autowired
+
+    @Value("${urlApi}")
+    private String urlApi;
+
+    @Autowired
     private FirebaseStorageServiceImpl firebaseStorageService;
 
     @GetMapping("/listado")
-    public String inicio(Model model) {
-        //listado de productos 
-        List<Producto> productos = productoService.getProductos(false);
-        model.addAttribute("productos",productos);
-        model.addAttribute("totalProductos",productos.size());
+    public String listado(Model model) {
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+        ResponseEntity<List<Producto>> response = new RestTemplate().exchange(
+                URI.create(String.format("%s/producto", urlApi)),
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<List<Producto>>() {
+        }
+        );
+
+        List<Producto> productos = response.getBody();
+        model.addAttribute("productos", productos);
+        model.addAttribute("totalProductos", productos.size());
         
-        //listado de categoria 
-        List<Categoria> categorias = categoriaService.getCategorias(true);
-        model.addAttribute("categorias",categorias);
-        
+
+        ResponseEntity<List<Categoria>> responseCat = new RestTemplate().exchange(
+                URI.create(String.format("%s/categoria?activos=false", urlApi)),
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<List<Categoria>>() {
+        }
+        );
+
+        List<Categoria> categorias = responseCat.getBody();
+        model.addAttribute("categorias", categorias);
+
         return "/producto/listado";
     }
-    
+
     @GetMapping("/nuevo")
     public String productoNuevo(Producto producto) {
         return "/producto/modifica";
     }
-    
+
     @PostMapping("/guardar")
     public String productoGuardar(Producto producto,
-            @RequestParam("imagenFile") MultipartFile imagenFile) {  
-        //verificamos que la imagen sea distinto de vacio
+            @RequestParam("imagenFile") MultipartFile imagenFile) {
+
         if (!imagenFile.isEmpty()) {
-            //guardar registro de la producto
-            productoService.save(producto);
+            HttpHeaders headers = new HttpHeaders();
+            HttpEntity<Producto> request = new HttpEntity<>(producto, headers);
+            ResponseEntity<Producto> response = new RestTemplate().postForEntity(
+                    URI.create(String.format("%s/producto", urlApi)),
+                    request,
+                    Producto.class
+            );
+
             producto.setRutaImagen(
                     firebaseStorageService.cargaImagen(
-                            imagenFile, 
-                            "producto", 
+                            imagenFile,
+                            "producto",
                             producto.getIdProducto()));
         }
-        productoService.save(producto);
-        //redirect vaya a una accion con este nombre que me sirve para hacer algo previo
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Producto> request = new HttpEntity<>(producto, headers);
+        request = new HttpEntity<>(producto, headers);
+        ResponseEntity<Producto> response = new RestTemplate().postForEntity(
+                URI.create(String.format("%s/producto", urlApi)),
+                request,
+                Producto.class
+        );
+
         return "redirect:/producto/listado";
     }
 
-    //rediccionamiento a un url
     @GetMapping("/eliminar/{idProducto}")
     public String productoEliminar(Producto producto) {
-        productoService.delete(producto);
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        ResponseEntity<Boolean> response = new RestTemplate().exchange(
+                URI.create(String.format("%s/producto/%s", urlApi, producto.getIdProducto())),
+                HttpMethod.DELETE,
+                request,
+                new ParameterizedTypeReference<Boolean>() {
+        }
+        );
         return "redirect:/producto/listado";
     }
 
     @GetMapping("/modificar/{idProducto}")
     public String productoModificar(Producto producto, Model model) {
-        producto = productoService.getProducto(producto);
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+        ResponseEntity<Producto> response = new RestTemplate().exchange(
+                URI.create(String.format("%s/producto/%s", urlApi, producto.getIdProducto())),
+                HttpMethod.GET,
+                request,
+                Producto.class
+        );
+        producto = response.getBody();
         model.addAttribute("producto", producto);
-        //listado de categoria 
-        List<Categoria> categorias = categoriaService.getCategorias(true);
-        model.addAttribute("categorias",categorias);
+        
+        ResponseEntity<List<Categoria>> responseCat = new RestTemplate().exchange(
+                URI.create(String.format("%s/categoria?activos=false", urlApi)),
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<List<Categoria>>() {
+        }
+        );
+
+        List<Categoria> categorias = responseCat.getBody();
+        model.addAttribute("categorias", categorias);
         
         return "/producto/modifica";
     }
+
 }
